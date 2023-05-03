@@ -1,23 +1,61 @@
+# Импортируем модуль socket для работы с сетевыми соединениями
+# Импортируем модуль sys для работы с системными функциями
+
 import socket
 import sys
+
+# Создаем TCP-сокет
+# Указываем IP-адрес и порт сервера
+# Привязываем сокет к указанному IP-адресу и порту
+# Устанавливаем максимальное количество подключений в очереди
 
 sock = socket.socket()
 ip = "localhost"
 port = 9999
 sock.bind((ip,port))
 sock.listen(10)
+
+# Выводим сообщение о запуске сервера
+
 print ('Server is running, please, press ctrl+c to stop')
+
+# Бесконечный цикл для прослушивания входящих соединений
+
 while True:
-	conn, addr = sock.accept()
-	print ('connected: ', addr)
-	name_f = (conn.recv(1024)).decode ('UTF-8')
-	f = open ('/root/recieve/' + name_f,'wb')
-	while True:
-		l = conn.recv(1024)
-		f.write(l)
-		if not l:
-			break
-	f.close()
-	conn.close()
-	print ('file received')
+  
+  # Принимаем входящее соединение и получаем информацию об адресе клиента
+  # Выводим сообщение о подключении клиента
+  
+  conn, addr = sock.accept()
+  print ('connected: ', addr)
+  
+  # Получаем имя файла, который клиент хочет отправить на сервер
+  # Декодируем полученные данные из байтовой строки в строку
+  
+  name_f = (conn.recv(1024)).decode ('UTF-8')
+  
+  # Открываем файл на запись в бинарном режиме
+  
+  f = open ('/root/recieve/' + name_f,'wb')
+  
+  # Цикл для получения данных от клиента и записи их в файл
+  # Если полученные данные пустые, то выходим из цикла
+  
+  while True:
+    l = conn.recv(1024)
+    f.write(l)
+    if not l:
+      break
+  
+  # Закрываем файл и соединение с клиентом
+  
+  f.close()
+  conn.close()
+  
+  # Выводим сообщение о получении файла
+  
+  print ('file received')
+
+# Закрываем сокет
+
 sock.close()
